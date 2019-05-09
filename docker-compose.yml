@@ -2,27 +2,39 @@ version: '3'
 services:
   db:
     image: "postgres:9.6.5"
+    #addon
+    ports:
+      - "5432:5432"
     volumes:
-      - "dbdata:/var/lib/postgresql/data"
+      - ./dbdata:/var/lib/postgresql/data
+      # - "dbdata:/var/lib/postgresql/data"
     env_file:
       - env_file
     networks:
       - db_network
   flaskapp:
+    # addon
+    # restart: "always"
     build: .
     env_file:
       - env_file
+    #addon
+    # ports:
+    # - 5001:5000
     volumes:
       - .:/opt/services/flaskapp/src
     networks:
       - db_network
       - web_network
+    # links:
+    # - db
     depends_on:
       - db
   nginx:
     image: "nginx:1.13.5"
+    # switched from "80:8080"
     ports:
-      - "80:8080"
+      - "8080:80"
     volumes:
       - ./conf.d:/etc/nginx/conf.d
     networks:
